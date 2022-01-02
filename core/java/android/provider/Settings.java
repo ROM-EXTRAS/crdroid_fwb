@@ -5414,6 +5414,12 @@ public final class Settings {
         public static final String LESS_BORING_HEADS_UP = "less_boring_heads_up";
 
         /**
+         * Whether to force small clock on keyguard
+         * @hide
+         */
+        public static final String LOCKSCREEN_SMALL_CLOCK = "lockscreen_small_clock";
+
+        /**
          * Whether to play notification sound and vibration if screen is ON
          * 0 - never
          * 1 - always
