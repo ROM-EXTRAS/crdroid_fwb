@@ -341,6 +341,8 @@ interface ITelecomService {
 
     void cleanupStuckCalls();
 
+    int cleanupOrphanPhoneAccounts();
+
     void resetCarMode();
 
     void setTestDefaultCallRedirectionApp(String packageName);
