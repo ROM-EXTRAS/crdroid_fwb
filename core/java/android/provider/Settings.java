@@ -5474,12 +5474,6 @@ public final class Settings {
         public static final String SCREEN_OFF_UDFPS = "screen_off_udfps";
 
         /**
-         * Navbar style
-         * @hide
-         */
-        public static final String NAVBAR_STYLE = "navbar_style";
-
-        /**
          * Gesture navbar length mode.
          * Supported modes: 0 for normal length, 1 for medium and 2 for long.
          * @hide
