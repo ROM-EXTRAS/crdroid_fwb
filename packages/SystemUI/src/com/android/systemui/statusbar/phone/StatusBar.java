@@ -216,7 +216,6 @@ import com.android.systemui.statusbar.PowerButtonReveal;
 import com.android.systemui.statusbar.PulseExpansionHandler;
 import com.android.systemui.statusbar.StatusBarState;
 import com.android.systemui.statusbar.SysuiStatusBarStateController;
-import com.android.systemui.statusbar.VisualizerView;
 import com.android.systemui.statusbar.charging.WiredChargingRippleController;
 import com.android.systemui.statusbar.connectivity.NetworkController;
 import com.android.systemui.statusbar.events.SystemStatusAnimationScheduler;
