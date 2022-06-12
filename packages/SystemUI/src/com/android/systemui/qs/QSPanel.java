@@ -91,7 +91,7 @@ public class QSPanel extends LinearLayout implements Tunable {
 
     protected boolean mExpanded;
     protected boolean mListening;
-    protected boolean mIsAutomaticBrightnessAvailable = false;
+    private boolean mIsAutomaticBrightnessAvailable = false;
 
     private QSDetail.Callback mCallback;
     protected QSTileHost mHost;
@@ -796,7 +796,7 @@ public class QSPanel extends LinearLayout implements Tunable {
         updatePadding();
     }
 
-    protected void updateBrightnessSliderPosition() {
+    private void updateBrightnessSliderPosition() {
         if (mBrightnessView == null) return;
         removeView(mBrightnessView);
         addView(mBrightnessView, mTop ? 0 : 1);
