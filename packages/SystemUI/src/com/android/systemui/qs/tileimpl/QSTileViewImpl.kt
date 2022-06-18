@@ -117,17 +117,9 @@ open class QSTileViewImpl @JvmOverloads constructor(
     private lateinit var ripple: RippleDrawable
     private lateinit var colorBackgroundDrawable: Drawable
     private var paintColor: Int = 0
-    private var radiusActive: Float = 0f
-    private var radiusInactive: Float = 0f
-    private val shapeAnimator: ValueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-        duration = QS_ANIM_LENGTH
-        interpolator = Interpolators.FAST_OUT_SLOW_IN
-        addUpdateListener { animation ->
-            setCornerRadius(animation.animatedValue as Float)
-        }
-    }
+    private var tileRadius: Float = 0f
     private val singleAnimator: ValueAnimator = ValueAnimator().apply {
-        duration = QS_ANIM_LENGTH
+        setDuration(QS_ANIM_LENGTH)
         addUpdateListener { animation ->
             setAllColors(
                 // These casts will throw an exception if some property is missing. We should
@@ -138,10 +130,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
                 animation.getAnimatedValue(CHEVRON_NAME) as Int
             )
         }
-    }
-
-    private val tileAnimator = AnimatorSet().apply {
-        playTogether(singleAnimator, shapeAnimator)
     }
 
     private var accessibilityClass: String? = null
@@ -165,8 +153,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
         background = null
 
         val iconContainerSize = context.resources.getDimensionPixelSize(R.dimen.qs_quick_tile_size)
-        radiusActive = iconContainerSize / 2f
-        radiusInactive = iconContainerSize / 4f
+        tileRadius = iconContainerSize / 2f
         iconContainer = LinearLayout(context)
         iconContainer.layoutParams = LayoutParams(iconContainerSize, iconContainerSize)
         iconContainer.clipChildren = false
@@ -175,7 +162,8 @@ open class QSTileViewImpl @JvmOverloads constructor(
         iconContainer.gravity = Gravity.CENTER
         iconContainer.background = createTileBackground()
         setColor(getBackgroundColorForState(QSTile.State.DEFAULT_STATE))
-        setCornerRadius(getCornerRadiusForState(QSTile.State.DEFAULT_STATE))
+        val mBg = ripple.findDrawableByLayerId(R.id.background) as GradientDrawable
+        mBg.cornerRadius = tileRadius
 
         val iconSize = context.resources.getDimensionPixelSize(R.dimen.qs_icon_size)
         iconContainer.addView(_icon, LayoutParams(iconSize, iconSize))
@@ -485,12 +473,8 @@ open class QSTileViewImpl @JvmOverloads constructor(
 
         // Colors && Shape
         if (state.state != lastState) {
-            tileAnimator.cancel()
+            singleAnimator.cancel()
             if (allowAnimations) {
-                shapeAnimator.setFloatValues(
-                    (colorBackgroundDrawable as GradientDrawable).cornerRadius,
-                    getCornerRadiusForState(state.state)
-                )
                 singleAnimator.setValues(
                         colorValuesHolder(
                                 BACKGROUND_NAME,
@@ -513,7 +497,7 @@ open class QSTileViewImpl @JvmOverloads constructor(
                                 getChevronColorForState(state.state)
                         )
                     )
-                tileAnimator.start()
+                singleAnimator.start()
             } else {
                 setAllColors(
                     getBackgroundColorForState(state.state),
@@ -521,7 +505,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
                     getSecondaryLabelColorForState(state.state),
                     getChevronColorForState(state.state)
                 )
-                setCornerRadius(getCornerRadiusForState(state.state))
             }
         }
 
@@ -589,20 +572,6 @@ open class QSTileViewImpl @JvmOverloads constructor(
             array[state.state]
         } else {
             ""
-        }
-    }
-
-    private fun setCornerRadius(cornerRadius: Float) {
-        val mBg = ripple.findDrawableByLayerId(R.id.background) as GradientDrawable
-        mBg.cornerRadius = cornerRadius
-    }
-
-    private fun getCornerRadiusForState(state: Int): Float {
-        return when (state) {
-            Tile.STATE_ACTIVE -> radiusActive
-            Tile.STATE_INACTIVE -> radiusInactive
-            Tile.STATE_UNAVAILABLE -> radiusInactive
-            else -> radiusInactive
         }
     }
 
