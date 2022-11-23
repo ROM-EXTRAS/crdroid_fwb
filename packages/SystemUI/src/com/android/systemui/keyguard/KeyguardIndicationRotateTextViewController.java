@@ -163,10 +163,10 @@ public class KeyguardIndicationRotateTextViewController extends
         boolean currMsgShownForMinTime = timeSinceLastIndicationSwitch >= minShowDuration;
         if (hasNewIndication) {
             if (mCurrIndicationType == INDICATION_TYPE_NONE || mCurrIndicationType == type || fixed) {
-                showIndication(type, showAsap);
+                showIndication(type);
             } else if (showAsap) {
                 if (currMsgShownForMinTime) {
-                    showIndication(type, showAsap);
+                    showIndication(type);
                 } else {
                     mIndicationQueue.removeIf(x -> x == type);
                     mIndicationQueue.add(0 /* index */, type /* type */);
@@ -177,7 +177,7 @@ public class KeyguardIndicationRotateTextViewController extends
                         getMinVisibilityMillis(mIndicationMessages.get(type)),
                         DEFAULT_INDICATION_SHOW_LENGTH);
                 if (timeSinceLastIndicationSwitch >= nextShowTime) {
-                    showIndication(type, showAsap);
+                    showIndication(type);
                 } else {
                     scheduleShowNextIndication(
                             nextShowTime - timeSinceLastIndicationSwitch);
@@ -194,7 +194,7 @@ public class KeyguardIndicationRotateTextViewController extends
                 if (mShowNextIndicationRunnable != null) {
                     mShowNextIndicationRunnable.runImmediately();
                 } else {
-                    showIndication(INDICATION_TYPE_NONE, true);
+                    showIndication(INDICATION_TYPE_NONE);
                 }
             } else {
                 scheduleShowNextIndication(minShowDuration - timeSinceLastIndicationSwitch);
@@ -259,7 +259,7 @@ public class KeyguardIndicationRotateTextViewController extends
      * Will re-add this indication to be re-shown after all other indications have been
      * rotated through.
      */
-    private void showIndication(@IndicationType int type, boolean showAsap) {
+    private void showIndication(@IndicationType int type) {
         if (mCurrIndicationType == INDICATION_TYPE_FACE_RECOGNITION_STARTED){
             return;
         }
@@ -281,7 +281,7 @@ public class KeyguardIndicationRotateTextViewController extends
         mLastIndicationSwitch = SystemClock.uptimeMillis();
         if (!TextUtils.equals(previousMessage, mCurrMessage)
                 || previousIndicationType != mCurrIndicationType) {
-            mView.switchIndication(mIndicationMessages.get(type), showAsap);
+            mView.switchIndication(mIndicationMessages.get(type));
         }
 
         // only schedule next indication if there's more than just this indication in the queue
@@ -333,9 +333,9 @@ public class KeyguardIndicationRotateTextViewController extends
                     if (isDozing == mIsDozing) return;
                     mIsDozing = isDozing;
                     if (mIsDozing) {
-                        showIndication(INDICATION_TYPE_NONE, true);
+                        showIndication(INDICATION_TYPE_NONE);
                     } else if (mIndicationQueue.size() > 0) {
-                        showIndication(mIndicationQueue.remove(0), true);
+                        showIndication(mIndicationQueue.remove(0));
                     }
                 }
             };
@@ -353,7 +353,7 @@ public class KeyguardIndicationRotateTextViewController extends
             mShowIndicationRunnable = () -> {
                 int type = mIndicationQueue.size() == 0
                         ? INDICATION_TYPE_NONE : mIndicationQueue.remove(0);
-                showIndication(type, true);
+                showIndication(type);
             };
             mCancelDelayedRunnable = mExecutor.executeDelayed(mShowIndicationRunnable, delay);
         }
