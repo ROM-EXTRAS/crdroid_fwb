@@ -16,13 +16,15 @@
 
 package android.hardware.camera2.impl;
 
+import static android.hardware.camera2.CameraAccessException.CAMERA_IN_USE;
+
 import static com.android.internal.util.function.pooled.PooledLambda.obtainRunnable;
 
 import android.annotation.NonNull;
 import android.content.Context;
+import android.app.ActivityThread;
 import android.graphics.ImageFormat;
 import android.hardware.ICameraService;
-import android.app.ActivityThread;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -1584,7 +1586,6 @@ public class CameraDeviceImpl extends CameraDevice
                 Log.w(TAG, "ignore input format/size check for white listed app");
                 return;
             }
-
             if (!checkInputConfigurationWithStreamConfigurations(inputConfig, /*maxRes*/false) &&
                     !checkInputConfigurationWithStreamConfigurations(inputConfig, /*maxRes*/true)) {
                 throw new IllegalArgumentException("Input config with format " +

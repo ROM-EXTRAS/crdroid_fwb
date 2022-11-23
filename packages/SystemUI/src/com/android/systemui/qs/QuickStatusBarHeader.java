@@ -485,12 +485,12 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
             // Animates the icons and battery indicator from alpha 0 to 1, when the chip is visible
             mIconsAlphaAnimator = mIconsAlphaAnimatorFixed;
             mIconsAlphaAnimator.setPosition(mKeyguardExpansionFraction);
-            setBatteryRemainingOnClick(false);
+            mBatteryRemainingIcon.setClickable(!visibility || mKeyguardExpansionFraction == 1f);
         } else {
             mIconsAlphaAnimator = null;
             mIconContainer.setAlpha(1);
             mBatteryRemainingIcon.setAlpha(1);
-            setBatteryRemainingOnClick(true);
+            mBatteryRemainingIcon.setClickable(true);
         }
     }
 
@@ -650,9 +650,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
     public void updateEverything() {
         post(() -> setClickable(!mExpanded));
-        if (mExpanded) {
-            setBatteryRemainingOnClick(true);
-        }
     }
 
     public void setCallback(Callback qsPanelCallback) {
@@ -752,18 +749,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 break;
             default:
                 break;
-        }
-    }
-
-    private void setBatteryRemainingOnClick(boolean enable) {
-        if (enable) {
-            mBatteryRemainingIcon.setOnClickListener(
-                    v -> mActivityStarter.postStartActivityDismissingKeyguard(
-                            new Intent(Intent.ACTION_POWER_USAGE_SUMMARY), 0));
-            mBatteryRemainingIcon.setClickable(true);
-        } else {
-            mBatteryRemainingIcon.setOnClickListener(null);
-            mBatteryRemainingIcon.setClickable(false);
         }
     }
 }
