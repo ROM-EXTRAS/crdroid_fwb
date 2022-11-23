@@ -1800,7 +1800,7 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
         }
     };
 
-    private void keyguardDone() {
+    public void keyguardDone() {
         Trace.beginSection("KeyguardViewMediator#keyguardDone");
         if (DEBUG) Log.d(TAG, "keyguardDone()");
         userActivity();
@@ -1949,8 +1949,9 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
             resetKeyguardDonePendingLocked();
         }
 
+
         if (mGoingToSleep) {
-            mUpdateMonitor.clearBiometricRecognizedWhenKeyguardDone(currentUser);
+            mUpdateMonitor.clearBiometricRecognized();
             Log.i(TAG, "Device is going to sleep, aborting keyguardDone");
             return;
         }
@@ -1971,7 +1972,7 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
         }
 
         handleHide();
-        mUpdateMonitor.clearBiometricRecognizedWhenKeyguardDone(currentUser);
+        mUpdateMonitor.clearBiometricRecognized();
         Trace.endSection();
     }
 
