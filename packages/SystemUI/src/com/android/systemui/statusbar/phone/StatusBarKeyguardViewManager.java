@@ -120,7 +120,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
     private final KeyguardMessageAreaController.Factory mKeyguardMessageAreaFactory;
     private KeyguardMessageAreaController mKeyguardMessageAreaController;
     private final Lazy<ShadeController> mShadeController;
-    private boolean mBouncerVisible = false;
     private final BouncerExpansionCallback mExpansionCallback = new BouncerExpansionCallback() {
         @Override
         public void onFullyShown() {
@@ -156,7 +155,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
 
         @Override
         public void onVisibilityChanged(boolean isVisible) {
-            mBouncerVisible = isVisible;
             if (!isVisible) {
                 cancelPostAuthActions();
             }
@@ -540,11 +538,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
             }
         }
         updateStates();
-        mHandler.postDelayed(() -> {
-            if (mBouncerVisible) {
-                onKeyguardBouncerFullyShownChanged(mBouncerVisible);
-            }
-        }, 100);
     }
 
     private boolean isWakeAndUnlocking() {

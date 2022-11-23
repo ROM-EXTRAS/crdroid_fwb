@@ -310,7 +310,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private ContentObserver mDeviceProvisionedObserver;
     private ContentObserver mTimeFormatChangeObserver;
     private ContentObserver mSettingsChangeObserver;
-    private ContentObserver mFaceUnlockChangeObserver;
 
     private boolean mSwitchingUser;
 
@@ -440,9 +439,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private static int sCurrentUser;
 
     private final boolean mFaceAuthOnlyOnSecurityView;
-    private static final int FACE_UNLOCK_BEHAVIOR_DEFAULT = 0;
-    private static final int FACE_UNLOCK_BEHAVIOR_SWIPE = 1;
-    private int mFaceUnlockBehavior = FACE_UNLOCK_BEHAVIOR_DEFAULT;
     private boolean mBouncerFullyShown;
 
     // Face unlock
@@ -1857,7 +1853,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         mSensorPrivacyManager = context.getSystemService(SensorPrivacyManager.class);
 
         updateFingerprintSettings();
-        updateFaceUnlockSettings();
 
         mHandler = new Handler(mainLooper) {
             @Override
@@ -2141,16 +2136,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         mContext.getContentResolver().registerContentObserver(
                 LineageSettings.System.getUriFor(LineageSettings.System.FINGERPRINT_WAKE_UNLOCK),
                 false, mSettingsChangeObserver, UserHandle.USER_ALL);
-
-        mFaceUnlockChangeObserver = new ContentObserver(mHandler) {
-            @Override
-            public void onChange(boolean selfChange) {
-                updateFaceUnlockSettings();
-            }
-        };
-        mContext.getContentResolver().registerContentObserver(
-                Settings.Secure.getUriFor(Settings.Secure.FACE_UNLOCK_METHOD),
-                false, mFaceUnlockChangeObserver, UserHandle.USER_ALL);
     }
 
     private void updateFingerprintSettings() {
@@ -2166,16 +2151,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             LineageSettings.System.putIntForUser(mContext.getContentResolver(),
                     LineageSettings.System.FINGERPRINT_WAKE_UNLOCK,
                     2, UserHandle.USER_CURRENT);
-        }
-    }
-
-    private void updateFaceUnlockSettings() {
-        if (mFaceAuthOnlyOnSecurityView) {
-            mFaceUnlockBehavior = FACE_UNLOCK_BEHAVIOR_SWIPE;
-        } else {
-            mFaceUnlockBehavior = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.FACE_UNLOCK_METHOD, FACE_UNLOCK_BEHAVIOR_DEFAULT,
-                UserHandle.USER_CURRENT);
         }
     }
 
@@ -2497,7 +2472,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                 && !faceAuthenticated
                 && !fpLockedout;
 
-        if (shouldListen && mFaceUnlockBehavior == FACE_UNLOCK_BEHAVIOR_SWIPE && !mBouncerFullyShown) {
+        if (shouldListen && mFaceAuthOnlyOnSecurityView && !mBouncerFullyShown){
             shouldListen = false;
         }
 
@@ -2531,7 +2506,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     public void onKeyguardBouncerFullyShown(boolean fullyShow) {
         if (mBouncerFullyShown != fullyShow){
             mBouncerFullyShown = fullyShow;
-            if (mFaceUnlockBehavior == FACE_UNLOCK_BEHAVIOR_SWIPE) {
+            if (mFaceAuthOnlyOnSecurityView){
                 updateFaceListeningState(BIOMETRIC_ACTION_UPDATE);
             }
         }
@@ -3567,10 +3542,6 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
 
         if (mSettingsChangeObserver != null) {
             mContext.getContentResolver().unregisterContentObserver(mSettingsChangeObserver);
-        }
-
-        if (mFaceUnlockChangeObserver != null) {
-            mContext.getContentResolver().unregisterContentObserver(mFaceUnlockChangeObserver);
         }
 
         try {

@@ -11154,12 +11154,6 @@ public final class Settings {
         public static final String PULSE_SMOOTHING_ENABLED = "pulse_smoothing_enabled";
 
         /**
-         * Face Unlock Method
-         * @hide
-         */
-        public static final String FACE_UNLOCK_METHOD = "face_unlock_method";
-
-        /**
          * Whether to show privacy indicator for location
          * Default value is based on it's device config flag
          * @hide
