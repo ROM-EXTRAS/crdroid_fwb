@@ -106,8 +106,7 @@ class CustomThemeOverlayController @Inject constructor(
     override fun start() {
 	Log.d(TAG, "Before Adding tunables")
         mTunerService.addTunable(this, PREF_COLOR_OVERRIDE, PREF_WHITE_LUMINANCE,
-                PREF_CHROMA_FACTOR, PREF_ACCURATE_SHADES, PREF_LINEAR_LIGHTNESS, PREF_CUSTOM_COLOR,
-                QS_BATTERY_LOCATION)
+                PREF_CHROMA_FACTOR, PREF_ACCURATE_SHADES, PREF_LINEAR_LIGHTNESS, PREF_CUSTOM_COLOR)
         super.start()
     }
 
@@ -130,8 +129,6 @@ class CustomThemeOverlayController @Inject constructor(
                 )
                 linearLightness = Settings.Secure.getInt(mContext.contentResolver,
                         PREF_LINEAR_LIGHTNESS, 0) != 0
-                reevaluateSystemTheme(true /* forceReload */)
-            } else {
                 reevaluateSystemTheme(true /* forceReload */)
             }
         }
@@ -213,9 +210,6 @@ class CustomThemeOverlayController @Inject constructor(
         private const val PREF_ACCURATE_SHADES = "${PREF_PREFIX}_accurate_shades"
         private const val PREF_LINEAR_LIGHTNESS = "${PREF_PREFIX}_linear_lightness"
         private const val PREF_WHITE_LUMINANCE = "${PREF_PREFIX}_white_luminance_user"
-
-         private const val QS_BATTERY_LOCATION =
-                "system:" + Settings.System.QS_BATTERY_LOCATION
 
         private const val WHITE_LUMINANCE_MIN = 1.0
         private const val WHITE_LUMINANCE_MAX = 10000.0
