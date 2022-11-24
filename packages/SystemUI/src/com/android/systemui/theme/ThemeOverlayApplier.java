@@ -260,7 +260,7 @@ public class ThemeOverlayApplier implements Dumpable {
     public void applyBlackTheme(boolean enable) {
         mBgExecutor.execute(() -> {
             try {
-                mOverlayManager.setEnabled("com.android.system.theme.black",
+                mOverlayManager.setEnabled("org.lineageos.overlay.customization.blacktheme",
                         enable, UserHandle.SYSTEM);
             } catch (SecurityException | IllegalStateException e) {
                 Log.e(TAG, "setEnabled failed", e);
