@@ -47,6 +47,7 @@ import com.android.systemui.wmshell.WMShell;
 
 import org.pixelexperience.systemui.GoogleServices;
 import org.pixelexperience.systemui.columbus.ColumbusTargetRequestServiceWrapper;
+import org.pixelexperience.systemui.gamedashboard.GameMenuActivityWrapper;
 import org.pixelexperience.systemui.statusbar.dagger.StatusBarGoogleModule;
 import org.pixelexperience.systemui.theme.CustomThemeOverlayController;
 
@@ -242,7 +243,15 @@ public abstract class SystemUIGoogleBinder {
     public abstract SystemUI bindGoogleServices(GoogleServices sysui);
 
     /**
-     * Inject into ColumbusTargetRequestServiceWrapper.
+     * Inject into GameMenuActivity.
+     */
+    @Binds
+    @IntoMap
+    @ClassKey(GameMenuActivityWrapper.class)
+    public abstract Activity bindGameMenuActivity(GameMenuActivityWrapper activity);
+
+    /**
+     * Inject into GameMenuActivity.
      */
     @Binds
     @IntoMap
