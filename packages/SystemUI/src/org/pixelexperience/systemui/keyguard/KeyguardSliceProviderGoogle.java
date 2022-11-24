@@ -29,7 +29,6 @@ import com.google.android.systemui.smartspace.SmartSpaceData;
 import com.google.android.systemui.smartspace.SmartSpaceUpdateListener;
 
 import java.lang.ref.WeakReference;
-import java.lang.Exception;
 
 import javax.inject.Inject;
 
@@ -91,14 +90,9 @@ public class KeyguardSliceProviderGoogle extends KeyguardSliceProvider implement
 
     @Override
     public boolean onCreateSliceProvider() {
-	boolean onCreateSliceProvider = false;
 	Log.e("CustomKeyguardSliceProvider", "before construction");
-	try {
-        onCreateSliceProvider = super.onCreateSliceProvider();
-	} catch (Exception e) {
-	Log.e("CustomKeyguardSliceProvider", "construction complete: "+e);
-	return false;
-	}
+        boolean onCreateSliceProvider = super.onCreateSliceProvider();
+	Log.e("CustomKeyguardSliceProvider", "construction complete");
         mSmartSpaceData = new SmartSpaceData();
 	Log.e("CustomKeyguardSliceProvider", "smartspace init");
         mSmartSpaceController.addListener(this);
