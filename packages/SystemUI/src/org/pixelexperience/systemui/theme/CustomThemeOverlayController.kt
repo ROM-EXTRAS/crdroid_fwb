@@ -35,12 +35,14 @@ import com.android.systemui.dump.DumpManager
 import com.android.systemui.flags.FeatureFlags
 import com.android.systemui.keyguard.WakefulnessLifecycle
 import com.android.systemui.settings.UserTracker
+import com.android.systemui.statusbar.policy.ConfigurationController
 import com.android.systemui.statusbar.policy.DeviceProvisionedController
 import com.android.systemui.theme.ThemeOverlayApplier
 import com.android.systemui.theme.ThemeOverlayController
 import com.android.systemui.tuner.TunerService
 import com.android.systemui.tuner.TunerService.Tunable
 import com.android.systemui.util.settings.SecureSettings
+import com.android.systemui.util.settings.SystemSettings
 import dev.kdrag0n.colorkt.Color
 import dev.kdrag0n.colorkt.cam.Zcam
 import dev.kdrag0n.colorkt.conversion.ConversionGraph.convert
@@ -71,6 +73,8 @@ class CustomThemeOverlayController @Inject constructor(
     dumpManager: DumpManager,
     featureFlags: FeatureFlags,
     wakefulnessLifecycle: WakefulnessLifecycle,
+    configurationController: ConfigurationController,
+    systemSettings: SystemSettings,
 ) : ThemeOverlayController(
     context,
     broadcastDispatcher,
@@ -86,6 +90,8 @@ class CustomThemeOverlayController @Inject constructor(
     dumpManager,
     featureFlags,
     wakefulnessLifecycle,
+    configurationController,
+    systemSettings,
 ), Tunable {
     private lateinit var cond: Zcam.ViewingConditions
     private lateinit var targets: MaterialYouTargets
@@ -100,7 +106,8 @@ class CustomThemeOverlayController @Inject constructor(
     override fun start() {
 	Log.d(TAG, "Before Adding tunables")
         mTunerService.addTunable(this, PREF_COLOR_OVERRIDE, PREF_WHITE_LUMINANCE,
-                PREF_CHROMA_FACTOR, PREF_ACCURATE_SHADES, PREF_LINEAR_LIGHTNESS, PREF_CUSTOM_COLOR)
+                PREF_CHROMA_FACTOR, PREF_ACCURATE_SHADES, PREF_LINEAR_LIGHTNESS, PREF_CUSTOM_COLOR,
+                QS_BATTERY_LOCATION)
         super.start()
     }
 
@@ -123,6 +130,8 @@ class CustomThemeOverlayController @Inject constructor(
                 )
                 linearLightness = Settings.Secure.getInt(mContext.contentResolver,
                         PREF_LINEAR_LIGHTNESS, 0) != 0
+                reevaluateSystemTheme(true /* forceReload */)
+            } else {
                 reevaluateSystemTheme(true /* forceReload */)
             }
         }
@@ -204,6 +213,9 @@ class CustomThemeOverlayController @Inject constructor(
         private const val PREF_ACCURATE_SHADES = "${PREF_PREFIX}_accurate_shades"
         private const val PREF_LINEAR_LIGHTNESS = "${PREF_PREFIX}_linear_lightness"
         private const val PREF_WHITE_LUMINANCE = "${PREF_PREFIX}_white_luminance_user"
+
+         private const val QS_BATTERY_LOCATION =
+                "system:" + Settings.System.QS_BATTERY_LOCATION
 
         private const val WHITE_LUMINANCE_MIN = 1.0
         private const val WHITE_LUMINANCE_MAX = 10000.0
